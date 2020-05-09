@@ -8,9 +8,7 @@ var sock = "/tmp/test.sock";
 console.log("Starting server at " + sock);
 fs.unlink(sock, function (stats, err) { });
 var server = net.createServer(function (client) {
-    client.on("connect", function () {
-        console.debug("Client connected: " + client);
-    });
+    console.info("Client connected: " + client);
 
     client.on("data", function (data) {
         var msg = data.toString('utf8').trim();
@@ -19,7 +17,7 @@ var server = net.createServer(function (client) {
     });
 
     client.on("end", function () {
-        console.debug("Client disconnected: " + client);
+        console.info("Client disconnected: " + client);
     });
 });
 server.listen(sock);
