@@ -1,9 +1,8 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"strings"
@@ -12,11 +11,24 @@ import (
 const sock = "/tmp/test.sock"
 
 func handleClient(c net.Conn) {
-	var buf bytes.Buffer
-	io.Copy(&buf, c)
-	msg := strings.TrimSpace(buf.String())
-	fmt.Println(msg)
-	c.Write(buf.Bytes())
+	fmt.Printf("Client connected: %s\n", c)
+	reader := bufio.NewReader(c)
+	writer := bufio.NewWriter(c)
+	for {
+		data, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+		msg := strings.TrimSpace(data)
+		fmt.Println(msg)
+		_, err = writer.Write([]byte(msg))
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+	}
+	fmt.Printf("Client disconnected: %s\n", c)
 }
 
 func main() {
@@ -27,7 +39,6 @@ func main() {
 	conn, _ := net.Listen("unix", sock)
 	for {
 		client, _ := conn.Accept()
-		fmt.Printf("Client connected: %s\n", client)
 		go handleClient(client)
 		defer client.Close()
 	}
