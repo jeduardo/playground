@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
+import multiprocessing
 import socket
 import sys
-import multiprocessing
-
 
 SOCK_PATH = "/tmp/test.sock"
 BUFFER_SIZE = 1024
@@ -12,6 +11,8 @@ BUFFER_SIZE = 1024
 def handleConnection(conn):
     while True:
         data = conn.recv(BUFFER_SIZE)
+        if len(data) == 0:
+            sys.exit(1)
         msg = data.decode("utf-8").strip()
         print(msg)
 
@@ -27,6 +28,7 @@ while True:
         data = input("> ")
         msg = data.strip()
         client.send("{}\r\n".format(msg).encode("utf-8"))
-    except (EOFError, KeyboardInterrupt) as e:
+    except (EOFError, KeyboardInterrupt, BrokenPipeError) as e:
+        print(e)
         reader.terminate()
-        break
+        sys.exit(1)
