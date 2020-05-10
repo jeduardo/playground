@@ -1,34 +1,44 @@
 #!/usr/bin/env python3
 
-import multiprocessing
+import os
 import socket
 import sys
+import threading
 
+TIMEOUT = 0.5
+BUFSIZE = 1024
 SOCK_PATH = "/tmp/test.sock"
-BUFFER_SIZE = 1024
 
 
-def handleConnection(conn):
+def handleConnection(sock):
     while True:
-        data = conn.recv(BUFFER_SIZE)
-        if len(data) == 0:
-            sys.exit(1)
-        msg = data.decode("utf-8").strip()
-        print(msg)
+        try:
+            data = sock.recv(BUFSIZE)
+            if len(data) == 0:
+                break
+            msg = data.decode("utf-8").strip()
+            print(msg)
+        except socket.timeout as t:
+            continue
+        except OSError as e:
+            break
+    print("Connection to server is closed")
 
 
 print("Connecting to server at {}".format(SOCK_PATH))
-client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-client.connect(SOCK_PATH)
-reader = multiprocessing.Process(target=handleConnection, args=(client,))
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+sock.settimeout(TIMEOUT)
+sock.connect(SOCK_PATH)
+reader = threading.Thread(target=handleConnection, args=(sock,))
 reader.start()
-
 while True:
     try:
-        data = input("> ")
-        msg = data.strip()
-        client.send("{}\r\n".format(msg).encode("utf-8"))
-    except (EOFError, KeyboardInterrupt, BrokenPipeError) as e:
-        print(e)
-        reader.terminate()
-        sys.exit(1)
+        line = input("> ")
+        if len(line) == 0:
+            break
+        msg = line.strip()
+        sock.send("{}\r\n".format(msg).encode("utf-8"))
+    except (EOFError, BrokenPipeError) as e:
+        break
+sock.close()
+reader.join()
