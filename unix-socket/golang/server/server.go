@@ -10,10 +10,10 @@ import (
 
 const sock = "/tmp/test.sock"
 
-func handleClient(c net.Conn) {
-	fmt.Printf("Client connected: %s\n", c)
-	reader := bufio.NewReader(c)
-	writer := bufio.NewWriter(c)
+func handleClient(conn net.Conn) {
+	fmt.Printf("Client connected: %s\n", conn)
+	reader := bufio.NewReader(conn)
+	var payload strings.Builder
 	for {
 		data, err := reader.ReadString('\n')
 		if err != nil {
@@ -22,13 +22,16 @@ func handleClient(c net.Conn) {
 		}
 		msg := strings.TrimSpace(data)
 		fmt.Println(msg)
-		_, err = writer.Write([]byte(msg))
+		payload.WriteString(msg)
+		payload.WriteString("\r\n")
+		_, err = conn.Write([]byte(payload.String()))
 		if err != nil {
 			fmt.Println(err)
 			break
 		}
+		payload.Reset()
 	}
-	fmt.Printf("Client disconnected: %s\n", c)
+	fmt.Printf("Client disconnected: %s\n", conn)
 }
 
 func main() {
