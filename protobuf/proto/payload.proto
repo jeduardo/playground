@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package playground;
+
+message Payload {
+    string name = 1;
+    bytes data = 2;
+}
+
+service ProcessPayload {
+    rpc process(Payload) returns (Payload) {}
+    rpc stream(stream Payload) returns (stream Payload) {}
+}
