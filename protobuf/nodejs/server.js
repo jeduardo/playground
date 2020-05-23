@@ -34,7 +34,7 @@ function streamPayload(call) {
         console.log(payload);
         call.write(payload);
         // Terminating stream
-        call.end();
+        //call.end();
     });
 }
 

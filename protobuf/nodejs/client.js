@@ -2,6 +2,7 @@
 
 var PROTO_PATH = __dirname + "/../proto/payload.proto";
 var ADDR = "127.0.0.1:40000";
+var MAX_MESSAGES = 5;
 
 var grpc = require("grpc");
 var protoLoader = require("@grpc/proto-loader");
@@ -44,8 +45,21 @@ var msg = {
     "data": Buffer.from("test message streaming", "utf8")
 }
 var call = client.stream(msg);
-call.on("data", function(payload) {
+var count = 0;
+call.on("data", function (payload) {
     console.log(payload);
+    count++;
+    if (count >= MAX_MESSAGES) {
+        call.cancel();
+    }
 });
-call.write(msg);
-call.end();
+call.on('error', function (err) {
+    console.log('Client canceled')
+});
+
+for (var i = 0; i < MAX_MESSAGES; i++) {
+    call.write({
+        "name": "test message streaming " + i,
+        "data": Buffer.from("test message streaming", "utf8")
+    });
+}
