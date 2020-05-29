@@ -11,9 +11,15 @@ from concurrent import futures
 
 class PayloadProcessServicer(payload_pb2_grpc.ProcessPayloadServicer):
 
-    def process(self, payload, context):
-        print(payload)
-        return payload
+    def process(self, request, context):
+        # Request here is the "Payload" object
+        print(request)
+        return request
+
+    def stream(self, request_iterator, context):
+        for payload in request_iterator:
+            print(payload)
+            yield payload
 
 
 def run():
