@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import os
 import socket
-import sys
 import threading
 
 TIMEOUT = 0.5
@@ -10,36 +8,36 @@ BUFSIZE = 1024
 SOCK_PATH = "/tmp/test.sock"
 
 
-def handleConnection(sock):
+def handle_connection(cli):
     while True:
         try:
-            data = sock.recv(BUFSIZE)
-            if len(data) == 0:
+            data = cli.recv(BUFSIZE)
+            if not data:
                 break
-            msg = data.decode("utf-8").strip()
-            print(msg)
-        except socket.timeout as t:
+            message = data.decode("utf-8").strip()
+            print(message)
+        except socket.timeout:
             continue
-        except OSError as e:
+        except OSError:
             break
     print("Connection to server is closed")
 
 
 if __name__ == "__main__":
     print("Connecting to server at {}".format(SOCK_PATH))
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    sock.settimeout(TIMEOUT)
-    sock.connect(SOCK_PATH)
-    reader = threading.Thread(target=handleConnection, args=(sock,))
-    reader.start()
+    SOCK = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    SOCK.settimeout(TIMEOUT)
+    SOCK.connect(SOCK_PATH)
+    READER = threading.Thread(target=handle_connection, args=(SOCK,))
+    READER.start()
     while True:
         try:
             line = input("> ")
-            if len(line) == 0:
+            if not line:
                 break
             msg = line.strip()
-            sock.send("{}\r\n".format(msg).encode("utf-8"))
-        except (EOFError, BrokenPipeError) as e:
+            SOCK.send("{}\r\n".format(msg).encode("utf-8"))
+        except (EOFError, BrokenPipeError):
             break
-    sock.close()
-    reader.join()
+    SOCK.close()
+    READER.join()

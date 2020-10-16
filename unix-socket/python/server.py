@@ -14,7 +14,7 @@ class ServerHandler(socketserver.BaseRequestHandler):
         try:
             while True:
                 data = self.request.recv(BUFSIZE)
-                if len(data) == 0:
+                if not data:
                     break
                 msg = data.decode("utf-8").strip()
                 print(msg)
@@ -22,6 +22,7 @@ class ServerHandler(socketserver.BaseRequestHandler):
         except BrokenPipeError:
             pass
         print("Client disconnected: {}".format(self.request))
+
 
 if __name__ == "__main__":
     try:
