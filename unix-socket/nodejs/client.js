@@ -1,23 +1,24 @@
 "use strict";
 
-var net = require("net");
-var readline = require("readline");
+const net = require("net");
+const readline = require("readline");
 
-var sock = "/tmp/test.sock";
+let sock = "/tmp/test.sock";
 
 console.log("Connecting to server at " + sock);
-var client = net.connect(sock);
-client.on("data", function (data) {
+let client = net.connect(sock);
+client.on("data", data => {
     console.log(data.toString("utf8").trim());
 });
 
-var prompt = readline.createInterface(process.stdin, process.stdout);
+let prompt = readline.createInterface(process.stdin, process.stdout);
 prompt.setPrompt("> ");
 prompt.prompt();
-prompt.on("line", function (line) {
+prompt.on("line", line => {
     client.write(line + "\r\n");
     prompt.prompt();
 });
-prompt.on("close", function () {
+prompt.on("close", () => {
     process.exit(0);
 });
+
