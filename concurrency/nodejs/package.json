@@ -1,0 +1,12 @@
+{
+  "name": "concurrency",
+  "version": "0.0.1",
+  "description": "Concurrency experiments",
+  "main": "concurrency.js",
+  "bin": {
+    "readable": "./concurrency.js"
+  },
+  "dependencies": {
+    "winston": "^3.3.3"
+  }
+}
