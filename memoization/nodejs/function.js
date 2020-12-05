@@ -128,25 +128,6 @@ async function getRemoteTime() {
   return res.data;
 }
 
-// let fetchTime = memoize(getRemoteTime, {
-//   cache: {
-//     create() {
-//       let map = new DynamoMap(doc);
-//       return {
-//         async has(key) {
-//           return await map.has(key);
-//         },
-//         async get(key) {
-//           return await map.get(key);
-//         },
-//         async set(key, value) {
-//           return await map.set(key, value);
-//         }
-//       }
-//     }
-//   }
-// });
-
 function memoize(method) {
   let map = new DynamoMap(doc);
   return async function () {
