@@ -1,0 +1,5 @@
+#!/bin/bash
+
+node function.js
+./dump
+echo "Current epoch is $(date +%s)"

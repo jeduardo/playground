@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export AWS_ACCESS_KEY_ID=dummyid 
+export AWS_SECRET_ACCESS_KEY=dummyaccesskey
+export AWS_DEFAULT_REGION=us-west-1
+export DYNAMODB_ENDPOINT=http://localhost:8000
+
+TABLES=$(aws dynamodb \
+  --endpoint-url ${DYNAMODB_ENDPOINT} \
+  list-tables \
+  --output text \
+  --query "TableNames")
+
+for table in $TABLES; do
+  echo "Content for table ${table}"
+  aws dynamodb \
+    --endpoint-url ${DYNAMODB_ENDPOINT} \
+    scan \
+    --table-name "$table"
+done
+echo "Current epoch is $(date +%s)"
