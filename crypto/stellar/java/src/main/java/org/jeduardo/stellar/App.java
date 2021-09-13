@@ -8,7 +8,8 @@ import org.stellar.sdk.Server;
 import org.stellar.sdk.responses.AccountResponse;
 
 /**
- * Tutorial implementation from <https://developers.stellar.org/docs/tutorials/create-account/
+ * Tutorial implementation from
+ * <https://developers.stellar.org/docs/tutorials/create-account/
  */
 public class App {
   public static void main(String... args) throws IOException {
@@ -20,7 +21,9 @@ public class App {
     System.out.println("Receiving bot deposit");
     String friendbotUrl = String.format("https://friendbot.stellar.org/?addr=%s", pair.getAccountId());
     InputStream response = new URL(friendbotUrl).openStream();
-    String body = new Scanner(response, "UTF-8").useDelimiter("\\A").next();
+    Scanner scanner = new Scanner(response, "UTF-8").useDelimiter("\\A");
+    String body = scanner.next();
+    scanner.close();
     System.out.println(String.format("New account: %s", body));
 
     System.out.println("Checking account details");
@@ -28,10 +31,9 @@ public class App {
     AccountResponse account = server.accounts().account(pair.getAccountId());
     System.out.println(String.format("Balances for account: %s", pair.getAccountId()));
     for (AccountResponse.Balance balance : account.getBalances()) {
-      System.out.println(String.format("Type: %s, Code: %s, Balance: %s",
-            balance.getAssetType(),
-            balance.getAssetCode(),
-            balance.getBalance()));
+      System.out.println(String.format("Type: %s, Code: %s, Balance: %s", balance.getAssetType(),
+          balance.getAssetCode(), balance.getBalance()));
     }
+    server.close();
   }
 }
