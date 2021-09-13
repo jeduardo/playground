@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+mainClassName = 'org.jeduardo.stellar.App'
+
+ext {
+    stellarVersion = '0.26.0'
+}
+
+repositories {
+    jcenter()
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation "com.github.stellar:java-stellar-sdk:${stellarVersion}"
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'junit:junit:4.12'
+}
