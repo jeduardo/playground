@@ -22,11 +22,17 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // Allow multiple sockets to use the same port
+  // Allow multiple sockets to use the same paddress and port
   int reuse = 1;
   if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse,
                  sizeof(reuse)) < 0) {
     perror("Setting SO_REUSEADDR failed");
+    close(sock);
+    exit(EXIT_FAILURE);
+  }
+  if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, (char *)&reuse,
+                 sizeof(reuse)) < 0) {
+    perror("Setting SO_REUSEPORT failed");
     close(sock);
     exit(EXIT_FAILURE);
   }
