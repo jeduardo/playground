@@ -57,7 +57,6 @@ fn main() {
     println!("{:?}", node2_ref);
     println!("{:?}", node3_ref);
 
-    // Clone the inner Node and modify it
     let new_val = node1_ref.borrow().val + 5;
     node1_ref.borrow_mut().val = new_val;
 
