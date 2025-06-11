@@ -1,0 +1,25 @@
+# Ignore compiled binaries
+server
+client
+
+# Ignore object files
+*.o
+
+# Ignore temporary or backup files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Ignore build logs
+*.log
+
+# Ignore make clean artifacts
+*.d
+
+# Ignore core dumps
+core
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
